@@ -28,9 +28,10 @@
       "@/pages/*": ["./src/pages/*"],
       "@/routes/*": ["./src/routes/*"],
       "@/hooks/*": ["./src/hooks/*"],
-      "@/store/*": ["./src/store/*"]
+      "@/store/*": ["./src/store/*"],
+      "@/layouts/*": ["./src/layouts/*"]
     },
-    "typeRoots": ["./typings/"]
+    "typeRoots": ["./typings/", "./node_modules/@types/"]
   },
   "include": ["./src", "./typings", "./vite.config.ts"],
   "exclude": ["node_modules"]
