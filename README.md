@@ -1,5 +1,3 @@
-[TOC]
-
 # 使用 Vite + React + Typescript 打造一个前端单页应用模板
 
 > 最近前端大火的 Vite 2.0 版本终于出来了，在这里分享一下如何使用 vite 构建一个前端单页应用
@@ -80,8 +78,6 @@ npm install --save-dev eslint lint-staged husky@4.3.8 prettier
 ```
 
 到这里，我们的整个项目就具备了针对提交的文件做 ESLint 校验并修复格式化的能力了
-
-![ESLintError]('/blog/images/fe-base/eslint-error.png')
 
 ## 编辑器配置
 
