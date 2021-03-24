@@ -28,7 +28,7 @@
       "@/pages/*": ["./src/pages/*"],
       "@/routes/*": ["./src/routes/*"],
       "@/hooks/*": ["./src/hooks/*"],
-      "@/store/*": ["./src/store/*"],
+      "@/stores/*": ["./src/stores/*"],
       "@/layouts/*": ["./src/layouts/*"]
     },
     "typeRoots": ["./typings/", "./node_modules/@types/"]

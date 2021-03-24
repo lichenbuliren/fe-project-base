@@ -20,7 +20,7 @@ const config: UserConfigExport = {
       '@/routes': path.resolve(__dirname, './src/routes'),
       '@/layouts': path.resolve(__dirname, './src/layouts'),
       '@/hooks': path.resolve(__dirname, './src/hooks'),
-      '@/store': path.resolve(__dirname, './src/store')
+      '@/stores': path.resolve(__dirname, './src/stores')
     }
   },
   css: {
@@ -36,20 +36,7 @@ const config: UserConfigExport = {
   },
   build: {
     cssCodeSplit: true,
-    sourcemap: 'inline',
     polyfillDynamicImport: true
-    // rollupOptions: {
-    //   treeshake: true,
-    //   external: ['react', 'react-dom'],
-    //   output: {
-    //     // Provide global variables to use in the UMD build
-    //     // for externalized deps
-    //     globals: {
-    //       react: 'React',
-    //       'react-dom': 'ReactDom'
-    //     }
-    //   }
-    // }
   }
 }
 
@@ -60,6 +47,7 @@ export default ({ command, mode }: ConfigEnv) => {
     const envConfig = dotenv.parse(fs.readFileSync(file))
     for (const k in envConfig) {
       if (Object.prototype.hasOwnProperty.call(envConfig, k)) {
+        // 解决在构建时无法识别 import.meta.env 变量的问题
         process.env[k] = envConfig[k]
       }
     }

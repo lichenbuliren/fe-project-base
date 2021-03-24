@@ -35,6 +35,9 @@
     "react-router-dom": "^5.2.0"
   },
   "devDependencies": {
+    "@types/babel__core": "^7.1.14",
+    "@types/ejs": "^3.0.6",
+    "@types/html-minifier-terser": "^5.1.1",
     "@types/loadable__component": "^5.13.3",
     "@types/node": "^14.14.35",
     "@types/react": "^17.0.0",
