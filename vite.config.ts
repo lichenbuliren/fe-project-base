@@ -1,12 +1,18 @@
 import { ConfigEnv, UserConfigExport, Plugin } from 'vite'
 import reactRefresh from '@vitejs/plugin-react-refresh'
+import legacy from '@vitejs/plugin-legacy'
 import path from 'path'
 import fs from 'fs'
 import dotenv from 'dotenv'
-import { minifyHtml } from 'vite-plugin-html'
+import { injectHtml, minifyHtml } from 'vite-plugin-html'
 
 const config: UserConfigExport = {
-  plugins: [reactRefresh()],
+  plugins: [
+    reactRefresh(),
+    legacy({
+      targets: ['Android > 39', '> 1%', 'last 2 versions', 'not IE 11']
+    })
+  ],
   resolve: {
     alias: {
       '@/': path.resolve(__dirname, './src'),
@@ -35,8 +41,22 @@ const config: UserConfigExport = {
     }
   },
   build: {
+    target: 'es2015',
     cssCodeSplit: true,
-    polyfillDynamicImport: true
+    polyfillDynamicImport: true,
+    rollupOptions: {
+      // make sure to externalize deps that shouldn't be bundled
+      // into your library
+      external: ['react', 'react-dom'],
+      output: {
+        // Provide global variables to use in the UMD build
+        // for externalized deps
+        globals: {
+          react: 'React',
+          'react-dom': 'ReactDom'
+        }
+      }
+    }
   }
 }
 
@@ -53,8 +73,10 @@ export default ({ command, mode }: ConfigEnv) => {
     }
   }
 
-  // const isBuild = command === 'build'
-  // const base = isBuild ? process.env.VITE_STATIC_CDN : '//localhost:3000'
+  const isBuild = command === 'build'
+  const base = isBuild ? process.env.VITE_STATIC_CDN : '//localhost:3000'
+  const injectScript = `<script crossorigin src="https://unpkg.com/react@17/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@17/umd/react-dom.production.min.js"></script>`
 
   // 在这里无法使用 import.meta.env 变量
   const _config = {
@@ -62,14 +84,16 @@ export default ({ command, mode }: ConfigEnv) => {
     base: process.env.VITE_STATIC_CDN,
     plugins: [
       ...(config.plugins as Plugin[]),
-      minifyHtml()
-      // injectHtml({
-      //   injectData: {
-      //     injectScript: `<link rel=modulepreload href="${base}/react.production.min-17.0.1.js"><link rel=modulepreload href="${base}/react-dom.production.min-17.0.1.js">`
-      //   }
-      // })
+      minifyHtml(),
+      injectHtml({
+        injectData: {
+          injectScript: isBuild ? injectScript : ''
+        }
+      })
     ]
   }
+
+  console.log(_config)
 
   if (command === 'serve') {
     return {
