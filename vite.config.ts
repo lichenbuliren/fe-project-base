@@ -10,7 +10,14 @@ const config: UserConfigExport = {
   plugins: [
     reactRefresh(),
     legacy({
-      targets: ['Android > 39', '> 1%', 'last 2 versions', 'not IE 11']
+      targets: [
+        'Android >= 39',
+        'Chrome >= 50',
+        'Safari >= 10.1',
+        'iOS >= 10.3',
+        '> 1%',
+        'not IE 11'
+      ]
     })
   ],
   resolve: {
@@ -74,9 +81,12 @@ export default ({ command, mode }: ConfigEnv) => {
   }
 
   const isBuild = command === 'build'
-  const base = isBuild ? process.env.VITE_STATIC_CDN : '//localhost:3000'
-  const injectScript = `<script crossorigin src="https://unpkg.com/react@17/umd/react.production.min.js"></script>
-  <script crossorigin src="https://unpkg.com/react-dom@17/umd/react-dom.production.min.js"></script>`
+  // const base = isBuild ? process.env.VITE_STATIC_CDN : '//localhost:3000'
+  // const linkArr = [
+  //   '<script crossorigin src="https://unpkg.com/react@17/umd/react.production.min.js"></script>',
+  //   '<script crossorigin src="https://unpkg.com/react-dom@17/umd/react-dom.production.min.js"></script>'
+  // ]
+  // const injectScript = linkArr.join('')
 
   // 在这里无法使用 import.meta.env 变量
   const _config = {
@@ -84,12 +94,12 @@ export default ({ command, mode }: ConfigEnv) => {
     base: process.env.VITE_STATIC_CDN,
     plugins: [
       ...(config.plugins as Plugin[]),
-      minifyHtml(),
-      injectHtml({
-        injectData: {
-          injectScript: isBuild ? injectScript : ''
-        }
-      })
+      minifyHtml()
+      // injectHtml({
+      //   injectData: {
+      //     injectScript: isBuild ? injectScript : ''
+      //   }
+      // })
     ]
   }
 
