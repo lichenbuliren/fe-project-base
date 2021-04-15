@@ -4,7 +4,6 @@ import React from 'react'
 
 const H5Home: React.FC = observer((props) => {
   const counterStore = useStores('counterStore')
-
   return (
     <>
       <div>Welcome H5 Home</div>

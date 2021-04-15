@@ -59,8 +59,10 @@
     "lint-staged": "^10.5.4",
     "postcss": "^8.2.8",
     "postcss-focus": "^5.0.1",
+    "rollup-plugin-visualizer": "^5.3.6",
     "typescript": "^4.2.3",
     "vite": "^2.1.0",
-    "vite-plugin-html": "^2.0.3"
+    "vite-plugin-html": "^2.0.3",
+    "vite-plugin-imp": "^2.0.7"
   }
 }

@@ -1,4 +1,5 @@
 import { useStores } from '@/hooks'
+import { observer } from 'mobx-react'
 import React from 'react'
 import { Link } from 'react-router-dom'
 import styles from './index.module.less'
@@ -8,7 +9,7 @@ interface IHomeProps {
   backurl?: string
 }
 
-const Home: React.FC<any> = (props) => {
+const Home: React.FC<any> = observer((props) => {
   const { backurl, title } = props
 
   const counterStore = useStores('counterStore')
@@ -27,6 +28,6 @@ const Home: React.FC<any> = (props) => {
       </p>
     </>
   )
-}
+})
 
 export default Home

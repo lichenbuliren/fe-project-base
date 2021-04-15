@@ -1,10 +1,12 @@
 import { ConfigEnv, UserConfigExport, Plugin } from 'vite'
 import reactRefresh from '@vitejs/plugin-react-refresh'
 import legacy from '@vitejs/plugin-legacy'
+import vitePluginImp from 'vite-plugin-imp'
+import visualizer from 'rollup-plugin-visualizer'
 import path from 'path'
 import fs from 'fs'
 import dotenv from 'dotenv'
-import { injectHtml, minifyHtml } from 'vite-plugin-html'
+import { minifyHtml } from 'vite-plugin-html'
 
 const config: UserConfigExport = {
   plugins: [
@@ -17,6 +19,16 @@ const config: UserConfigExport = {
         'iOS >= 10.3',
         '> 1%',
         'not IE 11'
+      ]
+    }),
+    // antd-mobile 按需引入
+    vitePluginImp({
+      libList: [
+        {
+          libName: 'antd-mobile',
+          style: (name) => `antd-mobile/es/${name}/style`,
+          libDirectory: 'es'
+        }
       ]
     })
   ],
@@ -33,14 +45,23 @@ const config: UserConfigExport = {
       '@/routes': path.resolve(__dirname, './src/routes'),
       '@/layouts': path.resolve(__dirname, './src/layouts'),
       '@/hooks': path.resolve(__dirname, './src/hooks'),
-      '@/stores': path.resolve(__dirname, './src/stores')
+      '@/stores': path.resolve(__dirname, './src/stores'),
+      react: path.resolve(__dirname, './node_modules/react/umd/react.production.min.js'),
+      'react-dom': path.resolve(
+        __dirname,
+        './node_modules/react-dom/umd/react-dom.production.min.js'
+      )
     }
   },
   css: {
     preprocessorOptions: {
       less: {
         // 支持内联 JavaScript
-        javascriptEnabled: true
+        javascriptEnabled: true,
+        // antd 定制主题样式
+        modifyVars: {
+          '@fill-body': '#fff'
+        }
       }
     },
     modules: {
@@ -49,76 +70,68 @@ const config: UserConfigExport = {
   },
   build: {
     target: 'es2015',
+    minify: 'terser',
     cssCodeSplit: true,
     polyfillDynamicImport: true,
     rollupOptions: {
-      // make sure to externalize deps that shouldn't be bundled
-      // into your library
-      external: ['react', 'react-dom'],
-      output: {
-        // Provide global variables to use in the UMD build
-        // for externalized deps
-        globals: {
-          react: 'React',
-          'react-dom': 'ReactDom'
-        }
-      }
+      plugins: []
     }
   }
 }
 
 export default ({ command, mode }: ConfigEnv) => {
-  const envFiles = ['.env', `.env.${mode}`]
+  const envFiles = ['.env.local', '.env', `.env.${mode}`]
+  const { plugins = [], build = {} } = config
+  const { rollupOptions = {} } = build
 
   for (const file of envFiles) {
-    const envConfig = dotenv.parse(fs.readFileSync(file))
-    for (const k in envConfig) {
-      if (Object.prototype.hasOwnProperty.call(envConfig, k)) {
-        // 解决在构建时无法识别 import.meta.env 变量的问题
-        process.env[k] = envConfig[k]
+    try {
+      fs.accessSync(file, fs.constants.F_OK)
+      const envConfig = dotenv.parse(fs.readFileSync(file))
+      for (const k in envConfig) {
+        if (Object.prototype.hasOwnProperty.call(envConfig, k)) {
+          process.env[k] = envConfig[k]
+        }
       }
+    } catch (error) {
+      console.log('配置文件不存在，忽略')
     }
   }
 
   const isBuild = command === 'build'
-  // const base = isBuild ? process.env.VITE_STATIC_CDN : '//localhost:3000'
-  // const linkArr = [
-  //   '<script crossorigin src="https://unpkg.com/react@17/umd/react.production.min.js"></script>',
-  //   '<script crossorigin src="https://unpkg.com/react-dom@17/umd/react-dom.production.min.js"></script>'
-  // ]
-  // const injectScript = linkArr.join('')
+  // const base = isBuild ? process.env.VITE_STATIC_CDN : '//localhost:3000/'
 
-  // 在这里无法使用 import.meta.env 变量
-  const _config = {
-    ...config,
-    base: process.env.VITE_STATIC_CDN,
-    plugins: [
-      ...(config.plugins as Plugin[]),
-      minifyHtml()
-      // injectHtml({
-      //   injectData: {
-      //     injectScript: isBuild ? injectScript : ''
-      //   }
-      // })
+  config.base = process.env.VITE_STATIC_CDN
+
+  if (isBuild) {
+    // 压缩 Html 插件
+    config.plugins = [...plugins, minifyHtml()]
+  }
+
+  if (process.env.VISUALIZER) {
+    const { plugins = [] } = rollupOptions
+    rollupOptions.plugins = [
+      ...plugins,
+      visualizer({
+        open: true,
+        gzipSize: true,
+        brotliSize: true
+      })
     ]
   }
 
-  console.log(_config)
-
+  // 在这里无法使用 import.meta.env 变量
   if (command === 'serve') {
-    return {
-      ..._config,
-      server: {
-        // 反向代理
-        proxy: {
-          api: {
-            target: process.env.VITE_API_HOST,
-            changeOrigin: true,
-            rewrite: (path: any) => path.replace(/^\/api/, '')
-          }
+    config.server = {
+      // 反向代理
+      proxy: {
+        api: {
+          target: process.env.VITE_API_HOST,
+          changeOrigin: true,
+          rewrite: (path: any) => path.replace(/^\/api/, '')
         }
       }
     }
   }
-  return _config
+  return config
 }
