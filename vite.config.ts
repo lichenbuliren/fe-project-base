@@ -46,11 +46,6 @@ const config: UserConfigExport = {
       '@/layouts': path.resolve(__dirname, './src/layouts'),
       '@/hooks': path.resolve(__dirname, './src/hooks'),
       '@/stores': path.resolve(__dirname, './src/stores')
-      // react: path.resolve(__dirname, './node_modules/react/umd/react.production.min.js'),
-      // 'react-dom': path.resolve(
-      //   __dirname,
-      //   './node_modules/react-dom/umd/react-dom.production.min.js'
-      // )
     }
   },
   css: {
@@ -112,6 +107,9 @@ export default ({ command, mode }: ConfigEnv) => {
   if (isBuild) {
     // 压缩 Html 插件
     config.plugins = [...plugins, minifyHtml()]
+    config.define = {
+      'process.env.NODE_ENV': '"production"'
+    }
   }
 
   if (process.env.VISUALIZER) {
@@ -139,11 +137,5 @@ export default ({ command, mode }: ConfigEnv) => {
       }
     }
   }
-  console.log(process.env.NODE_ENV)
-  return {
-    define: {
-      'process.env.NODE_ENV': (isBuild && `"${process.env.NODE_ENV}"`) || `"${mode}"`
-    },
-    ...config
-  }
+  return config
 }
