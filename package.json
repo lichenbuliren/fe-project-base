@@ -4,7 +4,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "build:dev": "tsc && vite build -m development",
+    "build:dev": "tsc && vite build -m qa",
     "serve": "vite preview"
   },
   "husky": {
@@ -61,7 +61,7 @@
     "postcss-focus": "^5.0.1",
     "rollup-plugin-visualizer": "^5.3.6",
     "typescript": "^4.2.3",
-    "vite": "^2.1.0",
+    "vite": "^2.1.5",
     "vite-plugin-html": "^2.0.3",
     "vite-plugin-imp": "^2.0.7"
   }

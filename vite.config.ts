@@ -45,12 +45,12 @@ const config: UserConfigExport = {
       '@/routes': path.resolve(__dirname, './src/routes'),
       '@/layouts': path.resolve(__dirname, './src/layouts'),
       '@/hooks': path.resolve(__dirname, './src/hooks'),
-      '@/stores': path.resolve(__dirname, './src/stores'),
-      react: path.resolve(__dirname, './node_modules/react/umd/react.production.min.js'),
-      'react-dom': path.resolve(
-        __dirname,
-        './node_modules/react-dom/umd/react-dom.production.min.js'
-      )
+      '@/stores': path.resolve(__dirname, './src/stores')
+      // react: path.resolve(__dirname, './node_modules/react/umd/react.production.min.js'),
+      // 'react-dom': path.resolve(
+      //   __dirname,
+      //   './node_modules/react-dom/umd/react-dom.production.min.js'
+      // )
     }
   },
   css: {
@@ -80,7 +80,13 @@ const config: UserConfigExport = {
 }
 
 export default ({ command, mode }: ConfigEnv) => {
-  const envFiles = ['.env.local', '.env', `.env.${mode}`]
+  // 官方策略顺序
+  const envFiles = [
+    /** mode local file */ `.env.${mode}.local`,
+    /** mode file */ `.env.${mode}`,
+    /** local file */ `.env.local`,
+    /** default file */ `.env`
+  ]
   const { plugins = [], build = {} } = config
   const { rollupOptions = {} } = build
 
@@ -133,5 +139,11 @@ export default ({ command, mode }: ConfigEnv) => {
       }
     }
   }
-  return config
+  console.log(process.env.NODE_ENV)
+  return {
+    define: {
+      'process.env.NODE_ENV': (isBuild && `"${process.env.NODE_ENV}"`) || `"${mode}"`
+    },
+    ...config
+  }
 }
