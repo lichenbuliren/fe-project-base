@@ -39,6 +39,7 @@ const config: UserConfigExport = {
         replacement: path.resolve(__dirname, './src/')
       }
     ]
+    // 以下配置，在 window 电脑跑不起来
     // alias: {
     //   '@/': path.join(__dirname, './src/')
     // }
