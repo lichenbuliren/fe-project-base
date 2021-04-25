@@ -16,20 +16,9 @@
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react",
-    "baseUrl": ".",
+    "baseUrl": "./",
     "paths": {
-      "@/*": ["./src/*"],
-      "@/components/*": ["./src/components/*"],
-      "@/styles/*": ["./src/styles/*"],
-      "@/config/*": ["./src/config/*"],
-      "@/utils/*": ["./src/utils/*"],
-      "@/common/*": ["./src/common/*"],
-      "@/assets/*": ["./src/assets/*"],
-      "@/pages/*": ["./src/pages/*"],
-      "@/routes/*": ["./src/routes/*"],
-      "@/hooks/*": ["./src/hooks/*"],
-      "@/stores/*": ["./src/stores/*"],
-      "@/layouts/*": ["./src/layouts/*"]
+      "@/*": ["./src/*"]
     },
     "typeRoots": ["./typings/", "./node_modules/@types/"]
   },
