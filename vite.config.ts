@@ -39,6 +39,9 @@ const config: UserConfigExport = {
         replacement: path.resolve(__dirname, './src/')
       }
     ]
+    // alias: {
+    //   '@/': path.join(__dirname, './src/')
+    // }
   },
   css: {
     preprocessorOptions: {
