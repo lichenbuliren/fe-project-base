@@ -4,7 +4,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "build:dev": "tsc && vite build -m development",
+    "build:dev": "tsc && vite build -m qa",
     "serve": "vite preview"
   },
   "husky": {
@@ -26,6 +26,7 @@
     "@loadable/component": "^5.14.1",
     "@vitejs/plugin-legacy": "^1.3.2",
     "classnames": "^2.2.6",
+    "indexof": "^0.0.1",
     "js-cookie": "^2.2.1",
     "mobx": "^6.1.7",
     "mobx-persist": "^0.4.1",
@@ -59,8 +60,10 @@
     "lint-staged": "^10.5.4",
     "postcss": "^8.2.8",
     "postcss-focus": "^5.0.1",
+    "rollup-plugin-visualizer": "^5.3.6",
     "typescript": "^4.2.3",
-    "vite": "^2.1.0",
-    "vite-plugin-html": "^2.0.3"
+    "vite": "^2.1.5",
+    "vite-plugin-html": "^2.0.3",
+    "vite-plugin-imp": "^2.0.7"
   }
 }
