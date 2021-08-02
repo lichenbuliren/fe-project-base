@@ -1,4 +1,4 @@
-import { ConfigEnv, UserConfigExport, Plugin } from 'vite'
+import { ConfigEnv, UserConfigExport, Plugin, optimizeDeps } from 'vite'
 import reactRefresh from '@vitejs/plugin-react-refresh'
 import legacy from '@vitejs/plugin-legacy'
 import vitePluginImp from 'vite-plugin-imp'
@@ -12,16 +12,9 @@ const config: UserConfigExport = {
   plugins: [
     reactRefresh(),
     legacy({
-      targets: [
-        'Android >= 39',
-        'Chrome >= 50',
-        'Safari >= 10.1',
-        'iOS >= 10.3',
-        '> 1%',
-        'not IE 11'
-      ]
+      targets: ['Android >= 39', 'Chrome >= 39', 'Safari >= 10.1', 'iOS >= 10', '> 0.5%'],
+      polyfills: ['es.promise', 'regenerator-runtime']
     }),
-    // antd-mobile 按需引入
     vitePluginImp({
       libList: [
         {
@@ -39,10 +32,6 @@ const config: UserConfigExport = {
         replacement: path.join(__dirname, './src/')
       }
     ]
-    // 以下配置，在 window 电脑跑不起来
-    // alias: {
-    //   '@/': path.join(__dirname, './src/')
-    // }
   },
   css: {
     preprocessorOptions: {
@@ -58,20 +47,10 @@ const config: UserConfigExport = {
     modules: {
       localsConvention: 'camelCase'
     }
-  },
-  build: {
-    target: 'es2015',
-    minify: 'terser',
-    cssCodeSplit: true,
-    polyfillDynamicImport: true,
-    rollupOptions: {
-      plugins: []
-    }
   }
 }
 
 export default ({ command, mode }: ConfigEnv) => {
-  // 官方策略顺序
   const envFiles = [
     /** mode local file */ `.env.${mode}.local`,
     /** mode file */ `.env.${mode}`,
@@ -123,6 +102,7 @@ export default ({ command, mode }: ConfigEnv) => {
   // 在这里无法使用 import.meta.env 变量
   if (command === 'serve') {
     config.server = {
+      host: '0.0.0.0',
       // 反向代理
       proxy: {
         api: {
